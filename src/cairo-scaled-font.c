@@ -1322,6 +1322,7 @@ cairo_scaled_font_destroy (cairo_scaled_font_t *scaled_font)
 
     if (! _cairo_reference_count_dec_and_test (&scaled_font->ref_count))
 	return;
+    CAIRO_MUTEX_LOCK(scaled_font->mutex);
 
     assert (! scaled_font->cache_frozen);
     assert (! scaled_font->global_cache_frozen);
@@ -1366,6 +1367,7 @@ cairo_scaled_font_destroy (cairo_scaled_font_t *scaled_font)
 
   unlock:
     _cairo_scaled_font_map_unlock ();
+    CAIRO_MUTEX_UNLOCK(scaled->font->mutex);
 
     /* If we pulled an item from the holdovers array, (while the font
      * map lock was held, of course), then there is no way that anyone
